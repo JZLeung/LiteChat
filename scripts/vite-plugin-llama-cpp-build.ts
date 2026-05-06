@@ -67,21 +67,28 @@ export function llamaCppBuildPlugin(): Plugin {
 					const distRoot = resolve('dist');
 					const pubRoot = resolve('../public');
 
-					// Clean generated files in public/
-					for (const f of readdirSync(pubRoot)) {
-						if (f === '_app' || f === 'bundle.js' || f === 'bundle.css') {
-							rmSync(resolve(pubRoot, f), { recursive: true, force: true });
+					// Process dist/ output (normalize + postprocess)
+					normalizeEnv(distRoot);
+					postprocessHtml(distRoot);
+
+					// Only copy to ../public if it exists (local llama.cpp server build)
+					if (existsSync(pubRoot)) {
+						// Clean generated files in public/
+						for (const f of readdirSync(pubRoot)) {
+							if (f === '_app' || f === 'bundle.js' || f === 'bundle.css') {
+								rmSync(resolve(pubRoot, f), { recursive: true, force: true });
+							}
 						}
+
+						// Copy dist/_app/* → public/_app/*
+						cpSync(resolve(distRoot, '_app'), resolve(pubRoot, '_app'), { recursive: true });
+
+						// Copy fallback index.html
+						cpSync(resolve(distRoot, 'index.html'), resolve(pubRoot, 'index.html'));
+
+						normalizeEnv(pubRoot);
+						postprocessHtml(pubRoot);
 					}
-
-					// Copy dist/_app/* → public/_app/*
-					cpSync(resolve(distRoot, '_app'), resolve(pubRoot, '_app'), { recursive: true });
-
-					// Copy fallback index.html
-					cpSync(resolve(distRoot, 'index.html'), resolve(pubRoot, 'index.html'));
-
-					normalizeEnv(pubRoot);
-					postprocessHtml(pubRoot);
 				} catch (error) {
 					console.error('Failed to post-process build:', error);
 				}

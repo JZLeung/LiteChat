@@ -22,8 +22,8 @@ export default defineConfig(({ mode }) => {
 
 		build: {
 			assetsInlineLimit: 32000,
-			chunkSizeWarningLimit: 1024,
-			minify: true
+			chunkSizeWarningLimit: 3000,
+			minify: true,
 		},
 
 		esbuild: {
