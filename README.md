@@ -4,6 +4,8 @@
 
 > 轻量级本地大模型聊天 WebUI，支持 vLLM、llama.cpp 及任何 OpenAI 兼容 API
 
+![LiteChat](demo.png)
+
 [English](#english-readme)
 
 </div>
