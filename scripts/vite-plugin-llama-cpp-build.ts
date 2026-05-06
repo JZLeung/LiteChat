@@ -67,6 +67,14 @@ export function llamaCppBuildPlugin(): Plugin {
 					const distRoot = resolve('dist');
 					const pubRoot = resolve('../public');
 
+					normalizeEnv(distRoot);
+					postprocessHtml(distRoot);
+
+					if (!existsSync(pubRoot)) {
+						console.log('✓ Skipped public/ sync (directory not found)');
+						return;
+					}
+
 					// Clean generated files in public/
 					for (const f of readdirSync(pubRoot)) {
 						if (f === '_app' || f === 'bundle.js' || f === 'bundle.css') {
